@@ -57,7 +57,7 @@ import org.xml.sax.XMLReader;
  * Not all HTML tags are supported.
  */
 @SuppressWarnings({"unused", "WeakerAccess"})
-public class HtmlCompat {
+public class EnhancedHtml {
 
     /**
      * Retrieves images for HTML &lt;img&gt; tags.
@@ -186,7 +186,7 @@ public class HtmlCompat {
      */
     private static final int TO_HTML_PARAGRAPH_FLAG = 0x00000001;
 
-    private HtmlCompat() {
+    private EnhancedHtml() {
     }
 
     /**

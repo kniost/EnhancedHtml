@@ -49,11 +49,11 @@ class HtmlToSpannedConverter implements ContentHandler {
             };
     private final Context mContext;
     private String mSource;
-    private final HtmlCompat.SpanCallback mSpanCallback;
+    private final EnhancedHtml.SpanCallback mSpanCallback;
     private XMLReader mReader;
     private SpannableStringBuilder mSpannableStringBuilder;
-    private HtmlCompat.ImageGetter mImageGetter;
-    private HtmlCompat.TagHandler mTagHandler;
+    private EnhancedHtml.ImageGetter mImageGetter;
+    private EnhancedHtml.TagHandler mTagHandler;
     private int mFlags;
     private static Pattern sTextAlignPattern;
     private static Pattern sForegroundColorPattern;
@@ -256,8 +256,8 @@ class HtmlToSpannedConverter implements ContentHandler {
         return sTextFontSizePattern;
     }
 
-    HtmlToSpannedConverter(Context context, String source, HtmlCompat.ImageGetter imageGetter,
-                           HtmlCompat.TagHandler tagHandler, HtmlCompat.SpanCallback spanCallback,
+    HtmlToSpannedConverter(Context context, String source, EnhancedHtml.ImageGetter imageGetter,
+                           EnhancedHtml.TagHandler tagHandler, EnhancedHtml.SpanCallback spanCallback,
                            Parser parser, int flags) {
         mContext = context;
         mSource = source;
@@ -423,34 +423,34 @@ class HtmlToSpannedConverter implements ContentHandler {
     }
 
     private int getMarginParagraph() {
-        return getMargin(HtmlCompat.FROM_HTML_SEPARATOR_LINE_BREAK_PARAGRAPH);
+        return getMargin(EnhancedHtml.FROM_HTML_SEPARATOR_LINE_BREAK_PARAGRAPH);
     }
 
     private int getMarginHeading() {
-        return getMargin(HtmlCompat.FROM_HTML_SEPARATOR_LINE_BREAK_HEADING);
+        return getMargin(EnhancedHtml.FROM_HTML_SEPARATOR_LINE_BREAK_HEADING);
     }
 
     private int getMarginListItem() {
-        return getMargin(HtmlCompat.FROM_HTML_SEPARATOR_LINE_BREAK_LIST_ITEM);
+        return getMargin(EnhancedHtml.FROM_HTML_SEPARATOR_LINE_BREAK_LIST_ITEM);
     }
 
     private int getMarginList() {
-        return getMargin(HtmlCompat.FROM_HTML_SEPARATOR_LINE_BREAK_LIST);
+        return getMargin(EnhancedHtml.FROM_HTML_SEPARATOR_LINE_BREAK_LIST);
     }
 
     private int getMarginDiv() {
-        return getMargin(HtmlCompat.FROM_HTML_SEPARATOR_LINE_BREAK_DIV);
+        return getMargin(EnhancedHtml.FROM_HTML_SEPARATOR_LINE_BREAK_DIV);
     }
 
     private int getMarginBlockquote() {
-        return getMargin(HtmlCompat.FROM_HTML_SEPARATOR_LINE_BREAK_BLOCKQUOTE);
+        return getMargin(EnhancedHtml.FROM_HTML_SEPARATOR_LINE_BREAK_BLOCKQUOTE);
     }
 
     /**
      * Returns the minimum number of newline characters needed before and after a given block-level
      * element.
      *
-     * @param flag the corresponding option flag defined in {@link HtmlCompat} of a block-level element
+     * @param flag the corresponding option flag defined in {@link EnhancedHtml} of a block-level element
      */
     private int getMargin(int flag) {
         if ((flag & mFlags) != 0) {
@@ -658,7 +658,7 @@ class HtmlToSpannedConverter implements ContentHandler {
         }
     }
 
-    private void startImg(Editable text, Attributes attributes, HtmlCompat.ImageGetter img) {
+    private void startImg(Editable text, Attributes attributes, EnhancedHtml.ImageGetter img) {
         String src = attributes.getValue("", "src");
         Drawable d = null;
         if (img != null) {
@@ -710,14 +710,14 @@ class HtmlToSpannedConverter implements ContentHandler {
         Href h = getLast(text, Href.class);
         if (h != null) {
             if (h.mHref != null) {
-                setSpanFromMark(tag, text, h, new HtmlCompat.DefensiveURLSpan((h.mHref)));
+                setSpanFromMark(tag, text, h, new EnhancedHtml.DefensiveURLSpan((h.mHref)));
             }
         }
     }
 
     private int getHtmlColor(String color) {
-        if ((mFlags & HtmlCompat.FROM_HTML_OPTION_USE_CSS_COLORS)
-                == HtmlCompat.FROM_HTML_OPTION_USE_CSS_COLORS) {
+        if ((mFlags & EnhancedHtml.FROM_HTML_OPTION_USE_CSS_COLORS)
+                == EnhancedHtml.FROM_HTML_OPTION_USE_CSS_COLORS) {
             Integer i = sColorMap.get(color.toLowerCase(Locale.US));
             if (i != null) {
                 return i;
