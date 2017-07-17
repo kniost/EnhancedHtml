@@ -60,6 +60,7 @@ class HtmlToSpannedConverter implements ContentHandler {
     private static Pattern sBackgroundColorPattern;
     private static Pattern sTextDecorationPattern;
     private static Pattern sTextFontSizePattern;
+    private static Pattern sImgSizePattern;
     /**
      * Name-value mapping of HTML/CSS colors which have different values in {@link Color}.
      */
@@ -254,6 +255,15 @@ class HtmlToSpannedConverter implements ContentHandler {
                     "(?:\\s+|\\A)font-size\\s*:\\s*(\\S*)\\b");
         }
         return sTextFontSizePattern;
+    }
+
+    private static Pattern getImgSizePattern() {
+        if (sImgSizePattern == null) {
+            sImgSizePattern = Pattern.compile(
+                    "(?:\\s+|\\A)width\\s*:\\s*(\\S*)\\b(?:\\s+|\\A)height\\s*:\\s*(\\S*)\\b"
+            );
+        }
+        return sImgSizePattern;
     }
 
     HtmlToSpannedConverter(Context context, String source, EnhancedHtml.ImageGetter imageGetter,
@@ -575,6 +585,11 @@ class HtmlToSpannedConverter implements ContentHandler {
         }
     }
 
+    /**
+     * 从text最后开始
+     * @param text
+     * @param mark
+     */
     private void start(Editable text, Object mark) {
         int len = text.length();
         text.setSpan(mark, len, len, Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
@@ -660,6 +675,24 @@ class HtmlToSpannedConverter implements ContentHandler {
 
     private void startImg(Editable text, Attributes attributes, EnhancedHtml.ImageGetter img) {
         String src = attributes.getValue("", "src");
+        String style = attributes.getValue("", "style");
+        if (style != null) {
+            Matcher m = getImgSizePattern().matcher(style);
+            if (m.find()) {
+                String width = m.group(1);
+                String height = m.group(2);
+                if (!TextUtils.isEmpty(width)) {
+                    if (width.contains("px")) {
+                        int imgWidthDigits = Integer.valueOf(width.replaceAll("\\D+",""));
+                    }
+                }
+                if (!TextUtils.isEmpty(height)) {
+                    if (height.contains("px")) {
+                        int imgHeightDigits = Integer.valueOf(height.replaceAll("\\D+", ""));
+                    }
+                }
+            }
+        }
         Drawable d = null;
         if (img != null) {
             d = img.getDrawable(src, attributes);
