@@ -15,7 +15,7 @@ Step 2. Add the dependency
 
 ```
 dependencies {
-        compile 'com.github.kniost:EnhancedHtml:0.0.4'
+        compile 'com.github.kniost:EnhancedHtml:v0.0.4'
 }
 ```
 
