@@ -11,7 +11,6 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.kniost.library.EnhancedHtml;
-import com.kniost.library.InputSpan;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.XMLReader;
@@ -31,10 +30,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onGlobalLayout() {
                 Spanned spanned = ((Spanned)mTestTv.getText());
-                InputSpan[] inputSpans = spanned.getSpans(0, spanned.length(), InputSpan.class);
-                if (inputSpans != null && inputSpans.length > 0) {
-                    for (int i = 0; i < inputSpans.length; i++) {
-                        Log.d("RectFGGG", inputSpans[i].getRectF().toString());
+                DemoInputSpan[] demoInputSpen = spanned.getSpans(0, spanned.length(), DemoInputSpan.class);
+                if (demoInputSpen != null && demoInputSpen.length > 0) {
+                    for (int i = 0; i < demoInputSpen.length; i++) {
+                        Log.d("RectFGGG", demoInputSpen[i].getRectF().toString());
                     }
                 }
             }
@@ -90,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
 
             if (!opening) {
                 if (tag.equalsIgnoreCase("input")) {
-                    output.setSpan(new InputSpan(), mStart, output.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    output.setSpan(new DemoInputSpan(), mStart, output.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 }
             }
         }

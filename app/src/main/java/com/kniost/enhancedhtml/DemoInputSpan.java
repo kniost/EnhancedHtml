@@ -1,4 +1,4 @@
-package com.kniost.library;
+package com.kniost.enhancedhtml;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -14,12 +14,12 @@ import android.text.style.ReplacementSpan;
  * input span
  */
 
-public class InputSpan extends ReplacementSpan {
+public class DemoInputSpan extends ReplacementSpan {
     private int mTop, mBottom, mWidth;
     private float mLeft, mRight;
     private final Paint mPaint;
     private RectF mRectF = new RectF(mLeft, mTop, mRight, mBottom);
-    public InputSpan() {
+    public DemoInputSpan() {
         mPaint = new Paint();
         mPaint.setStyle(Paint.Style.FILL);
         mPaint.setColor(Color.BLUE);
@@ -47,7 +47,7 @@ public class InputSpan extends ReplacementSpan {
         mRectF = new RectF(mLeft, mTop, mRight, mBottom);
 //        Log.d("RectF", mRectF.toString());
         canvas.drawRect(mLeft, mTop, mRight, mBottom, mPaint);
-        canvas.drawText(text, start, end, x + 15, y, paint);
+        canvas.drawText(text, start, end, x, y, paint);
     }
 
     public RectF getRectF() {
