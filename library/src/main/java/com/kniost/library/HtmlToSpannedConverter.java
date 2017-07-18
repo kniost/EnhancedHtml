@@ -2,8 +2,11 @@ package com.kniost.library;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.text.Editable;
 import android.text.Layout;
@@ -26,6 +29,11 @@ import android.text.style.SubscriptSpan;
 import android.text.style.SuperscriptSpan;
 import android.text.style.TypefaceSpan;
 import android.text.style.UnderlineSpan;
+
+import com.kniost.library.jlatexmath.core.Insets;
+import com.kniost.library.jlatexmath.core.TeXConstants;
+import com.kniost.library.jlatexmath.core.TeXFormula;
+import com.kniost.library.jlatexmath.core.TeXIcon;
 
 import org.ccil.cowan.tagsoup.Parser;
 import org.xml.sax.Attributes;
@@ -55,12 +63,15 @@ class HtmlToSpannedConverter implements ContentHandler {
     private EnhancedHtml.ImageGetter mImageGetter;
     private EnhancedHtml.TagHandler mTagHandler;
     private int mFlags;
+    private TeXFormula.TeXIconBuilder mTeXIconBuilder;
     private static Pattern sTextAlignPattern;
     private static Pattern sForegroundColorPattern;
     private static Pattern sBackgroundColorPattern;
     private static Pattern sTextDecorationPattern;
     private static Pattern sTextFontSizePattern;
     private static Pattern sImgSizePattern;
+    private static Pattern sLatexPattern;
+    private static final String fRelaceLatex = "<latex $1 formula=\"$2\"/>";
     /**
      * Name-value mapping of HTML/CSS colors which have different values in {@link Color}.
      */
@@ -260,23 +271,31 @@ class HtmlToSpannedConverter implements ContentHandler {
     private static Pattern getImgSizePattern() {
         if (sImgSizePattern == null) {
             sImgSizePattern = Pattern.compile(
-                    "(?:\\s+|\\A)width\\s*:\\s*(\\S*)\\b(?:\\s+|\\A)height\\s*:\\s*(\\S*)\\b"
+                    "(?:\\s*)width\\s*:\\s*(\\S*)(?:\\s*;\\s*)height\\s*:\\s*(\\S*)\\b"
             );
         }
         return sImgSizePattern;
     }
 
+    private static Pattern getLatexPattern() {
+        if (sLatexPattern == null) {
+            sLatexPattern = Pattern.compile("(?:\\s*)<span\\s*class\\s*=\\s*\"mathquill-embedded-latex\"(.*)>(.*)</span>");
+        }
+        return sLatexPattern;
+    }
+
     HtmlToSpannedConverter(Context context, String source, EnhancedHtml.ImageGetter imageGetter,
-                           EnhancedHtml.TagHandler tagHandler, EnhancedHtml.SpanCallback spanCallback,
+                           EnhancedHtml.TagHandler tagHandler, TeXFormula.TeXIconBuilder teXIconBuilder, EnhancedHtml.SpanCallback spanCallback,
                            Parser parser, int flags) {
         mContext = context;
-        mSource = source;
+        mSource = getLatexPattern().matcher(source).replaceAll(fRelaceLatex);
         mSpannableStringBuilder = new SpannableStringBuilder();
         mImageGetter = imageGetter;
         mTagHandler = tagHandler;
         mSpanCallback = spanCallback;
         mReader = parser;
         mFlags = flags;
+        mTeXIconBuilder = teXIconBuilder;
     }
 
     Spanned convert() {
@@ -368,6 +387,8 @@ class HtmlToSpannedConverter implements ContentHandler {
             startHeading(mSpannableStringBuilder, attributes, tag.charAt(1) - '1');
         } else if (tag.equalsIgnoreCase("img")) {
             startImg(mSpannableStringBuilder, attributes, mImageGetter);
+        } else if (tag.equalsIgnoreCase("latex")) {
+            startLatex(mSpannableStringBuilder, attributes);
         } else if (mTagHandler != null) {
             mTagHandler.handleTag(true, tag, attributes, mSpannableStringBuilder, mReader);
         }
@@ -676,6 +697,8 @@ class HtmlToSpannedConverter implements ContentHandler {
     private void startImg(Editable text, Attributes attributes, EnhancedHtml.ImageGetter img) {
         String src = attributes.getValue("", "src");
         String style = attributes.getValue("", "style");
+        int imgWidthDigits = 0;
+        int imgHeightDigits = 0;
         if (style != null) {
             Matcher m = getImgSizePattern().matcher(style);
             if (m.find()) {
@@ -683,12 +706,12 @@ class HtmlToSpannedConverter implements ContentHandler {
                 String height = m.group(2);
                 if (!TextUtils.isEmpty(width)) {
                     if (width.contains("px")) {
-                        int imgWidthDigits = Integer.valueOf(width.replaceAll("\\D+",""));
+                        imgWidthDigits = Integer.valueOf(width.replaceAll("\\D+",""));
                     }
                 }
                 if (!TextUtils.isEmpty(height)) {
                     if (height.contains("px")) {
-                        int imgHeightDigits = Integer.valueOf(height.replaceAll("\\D+", ""));
+                        imgHeightDigits = Integer.valueOf(height.replaceAll("\\D+", ""));
                     }
                 }
             }
@@ -700,11 +723,67 @@ class HtmlToSpannedConverter implements ContentHandler {
         if (d == null) {
             Resources res = mContext.getResources();
             d = res.getDrawable(R.drawable.ic_no_img);
-            d.setBounds(0, 0, d.getIntrinsicWidth(), d.getIntrinsicHeight());
+            d.setBounds(0, 0, imgWidthDigits, imgHeightDigits);
         }
         int len = text.length();
         text.append("\uFFFC");
         text.setSpan(new ImageSpan(d, src), len, text.length(),
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+    }
+
+    private void startLatex(Editable text, Attributes attributes) {
+        String formulaString = attributes.getValue("", "formula");
+        String style = attributes.getValue("", "style");
+        int imgWidthDigits = 0;
+        int imgHeightDigits = 0;
+        if (style != null) {
+            Matcher m = getImgSizePattern().matcher(style);
+            if (m.find()) {
+                String width = m.group(1);
+                String height = m.group(2);
+                if (!TextUtils.isEmpty(width)) {
+                    if (width.contains("px")) {
+                        imgWidthDigits = Integer.valueOf(width.replaceAll("\\D+",""));
+                    }
+                }
+                if (!TextUtils.isEmpty(height)) {
+                    if (height.contains("px")) {
+                        imgHeightDigits = Integer.valueOf(height.replaceAll("\\D+", ""));
+                    }
+                }
+            }
+        }
+        TeXFormula formula = new TeXFormula(formulaString);
+        TeXIcon icon;
+        if (mTeXIconBuilder != null) {
+            icon = formula.new TeXIconBuilder(mTeXIconBuilder)
+                    .build();
+        } else {
+            icon = formula.new TeXIconBuilder()
+                    .setStyle(TeXConstants.STYLE_DISPLAY)
+                    .setSize(14)
+                    .setWidth(TeXConstants.UNIT_PIXEL, imgWidthDigits, TeXConstants.ALIGN_LEFT)
+                    .setIsMaxWidth(true)
+                    .setInterLineSpacing(TeXConstants.UNIT_PIXEL, 5).build();
+        }
+        icon.setInsets(new Insets(5, 5, 5, 5));
+        Bitmap image = Bitmap.createBitmap(icon.getIconWidth(), icon.getIconHeight(), Bitmap.Config.ARGB_8888);
+        Canvas c = new Canvas(image);
+        c.drawColor(Color.WHITE);
+        icon.paintIcon(c, 0, 0);
+
+        Drawable d = null;
+        if (image != null) {
+            d = new BitmapDrawable(mContext.getResources(), image);
+        }
+        if (d == null) {
+            Resources res = mContext.getResources();
+            d = res.getDrawable(R.drawable.ic_no_img);
+        }
+        d.setBounds(0, 0, imgWidthDigits, imgHeightDigits);
+        int len = text.length();
+        text.append("\uFFFC");
+        text.setSpan(new ImageSpan(d, ""), len, text.length(),
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
     }
 

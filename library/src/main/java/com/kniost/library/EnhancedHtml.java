@@ -47,6 +47,8 @@ import android.text.style.URLSpan;
 import android.text.style.UnderlineSpan;
 import android.view.View;
 
+import com.kniost.library.jlatexmath.core.TeXFormula;
+
 import org.ccil.cowan.tagsoup.HTMLSchema;
 import org.ccil.cowan.tagsoup.Parser;
 import org.xml.sax.Attributes;
@@ -197,7 +199,7 @@ public class EnhancedHtml {
      * <p>This uses TagSoup to handle real HTML, including all of the brokenness found in the wild.
      */
     public static Spanned fromHtml(@NonNull Context context, @NonNull String source, int flags) {
-        return fromHtml(context, source, flags, null, null);
+        return fromHtml(context, source, flags, null, null, null);
     }
 
     /**
@@ -209,6 +211,17 @@ public class EnhancedHtml {
         private static final HTMLSchema schema = new HTMLSchema();
     }
 
+    /**
+     * Returns displayable styled text from the provided HTML string. Any &lt;img&gt; tags in the
+     * HTML will not use an ImageGetter to request a representation of the image or TagHandler to
+     * handle unknown tags.
+     * <p>
+     * <p>This uses TagSoup to handle real HTML, including all of the brokenness found in the wild.
+     */
+    public static Spanned fromHtml(@NonNull Context context, @NonNull String source, int flags,
+                                   @Nullable ImageGetter imageGetter,  @Nullable TeXFormula.TeXIconBuilder teXIconBuilder) {
+        return fromHtml(context, source, flags, imageGetter, null, teXIconBuilder);
+    }
 
     /**
      * Returns displayable styled text from the provided HTML string. Any &lt;img&gt; tags in the
@@ -218,20 +231,7 @@ public class EnhancedHtml {
      * <p>This uses TagSoup to handle real HTML, including all of the brokenness found in the wild.
      */
     public static Spanned fromHtml(@NonNull Context context, @NonNull String source, int flags,
-                                   @Nullable ImageGetter imageGetter) {
-        return fromHtml(context, source, flags, imageGetter, null, null);
-    }
-
-    /**
-     * Returns displayable styled text from the provided HTML string. Any &lt;img&gt; tags in the
-     * HTML will use the specified ImageGetter to request a representation of the image (use null
-     * if you don't want this) and the specified TagHandler to handle unknown tags (specify null if
-     * you don't want this).
-     * <p>
-     * <p>This uses TagSoup to handle real HTML, including all of the brokenness found in the wild.
-     */
-    public static Spanned fromHtml(@NonNull Context context, @NonNull String source, int flags,
-                                   @Nullable ImageGetter imageGetter, @Nullable TagHandler tagHandler) {
+                                   @Nullable ImageGetter imageGetter,  @Nullable TagHandler tagHandler) {
         return fromHtml(context, source, flags, imageGetter, tagHandler, null);
     }
 
@@ -244,8 +244,20 @@ public class EnhancedHtml {
      * <p>This uses TagSoup to handle real HTML, including all of the brokenness found in the wild.
      */
     public static Spanned fromHtml(@NonNull Context context, @NonNull String source, int flags,
-                                   @Nullable ImageGetter imageGetter, @Nullable TagHandler tagHandler,
-                                   @Nullable SpanCallback spanCallback) {
+                                   @Nullable ImageGetter imageGetter, @Nullable TagHandler tagHandler, @Nullable TeXFormula.TeXIconBuilder teXIconBuilder) {
+        return fromHtml(context, source, flags, imageGetter, tagHandler, teXIconBuilder, null);
+    }
+
+    /**
+     * Returns displayable styled text from the provided HTML string. Any &lt;img&gt; tags in the
+     * HTML will use the specified ImageGetter to request a representation of the image (use null
+     * if you don't want this) and the specified TagHandler to handle unknown tags (specify null if
+     * you don't want this).
+     * <p>
+     * <p>This uses TagSoup to handle real HTML, including all of the brokenness found in the wild.
+     */
+    public static Spanned fromHtml(@NonNull Context context, @NonNull String source, int flags, @Nullable ImageGetter imageGetter, @Nullable TagHandler tagHandler,
+                                   @Nullable TeXFormula.TeXIconBuilder teXIconBuilder, @Nullable SpanCallback spanCallback) {
         if (source == null) {
             return null;
         }
@@ -257,7 +269,7 @@ public class EnhancedHtml {
             throw new RuntimeException(e);
         }
         HtmlToSpannedConverter converter =
-                new HtmlToSpannedConverter(context, source, imageGetter, tagHandler, spanCallback, parser, flags);
+                new HtmlToSpannedConverter(context, source, imageGetter, tagHandler, teXIconBuilder, spanCallback, parser, flags);
         return converter.convert();
     }
 

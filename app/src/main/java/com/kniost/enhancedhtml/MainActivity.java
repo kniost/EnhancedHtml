@@ -2,7 +2,6 @@ package com.kniost.enhancedhtml;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Editable;
 import android.text.Spanned;
 import android.util.Log;
 import android.view.View;
@@ -11,9 +10,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.kniost.library.EnhancedHtml;
-
-import org.xml.sax.Attributes;
-import org.xml.sax.XMLReader;
+import com.kniost.library.jlatexmath.core.AjLatexMath;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -24,6 +21,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        AjLatexMath.init(this);
 
         mTestTv = (TextView) findViewById(R.id.test_tv);
         mTestTv.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -50,8 +49,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setTestTv() {
-        CustomTagHandler tagHandler = new CustomTagHandler();
-        Spanned spannableString = EnhancedHtml.fromHtml(MainActivity.this, TEST_STRING, 0, null, tagHandler);
+        Spanned spannableString = EnhancedHtml.fromHtml(MainActivity.this, TEST_STRING, 0, null, new CustomTagHandler());
         mTestTv.setText(spannableString);
 
     }
@@ -59,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * 文字由UMEditor生成
      */
-    private String TEST_STRING = "<p>\n" +
+    private final String TEST_STRING = "<p>\n" +
             "    部分<input value=\"你好\"><strong>文字加粗</strong>居左\n" +
             "</p>\n" +
             "<p style=\"text-align: center;\">\n" +
@@ -71,28 +69,15 @@ public class MainActivity extends AppCompatActivity {
             "</p>\n" +
             "<p style=\"text-align: right;\">\n" +
             "    或者有<font color=\"green\">个公式</font><span class=\"mathquill-embedded-latex\" style=\"width: 25px; height: 32px;\">x^3</span>，右对齐\n" +
+            "</p>" +
+            "<p>\n" +
+            "    <br/>\n" +
+            "    <div style=\"text-align: center;\">\n" +
+            "        <span class=\"mathquill-embedded-latex\" style=\"background-color: rgb(255, 255, 255); width: 141px; height: 50px;\">\\frac{-b\\pm\\sqrt[2]{b^2-4ac}}{2a}</span>\n" +
+            "    </div>\n" +
             "</p>";
 
-    private class CustomTagHandler implements EnhancedHtml.TagHandler {
-        private String mInputValue;
-        private int mStart;
+    private final String LATEX_STRING = "\\frac{-b\\pm\\sqrt[2]{b^2-4ac}}{2a}";
 
-        @Override
-        public void handleTag(boolean opening, String tag, Attributes attributes, Editable output, XMLReader xmlReader) {
-            if (opening) {
-                if (tag.equalsIgnoreCase("input")) {
-                    mInputValue = attributes.getValue("", "value");
-                    mStart = output.length();
-                    output.append(mInputValue);
-                }
-            }
-
-            if (!opening) {
-                if (tag.equalsIgnoreCase("input")) {
-                    output.setSpan(new DemoInputSpan(), mStart, output.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                }
-            }
-        }
-    }
 
 }
