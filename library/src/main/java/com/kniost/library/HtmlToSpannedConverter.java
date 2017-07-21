@@ -54,7 +54,7 @@ import java.util.regex.Pattern;
 class HtmlToSpannedConverter implements ContentHandler {
     private static final float[] HEADING_SIZES = {
             1.5f, 1.4f, 1.3f, 1.2f, 1.1f, 1f,
-            };
+    };
     private final Context mContext;
     private String mSource;
     private final EnhancedHtml.SpanCallback mSpanCallback;
@@ -608,6 +608,7 @@ class HtmlToSpannedConverter implements ContentHandler {
 
     /**
      * 从text最后开始
+     *
      * @param text
      * @param mark
      */
@@ -652,14 +653,14 @@ class HtmlToSpannedConverter implements ContentHandler {
             m = getFontSizePattern().matcher(style);
             if (m.find()) {
                 String textSize = m.group(1);
-                if(!TextUtils.isEmpty(textSize)) {
-                    if(textSize.contains("px")) {
-                        int textSizeDigits = Integer.valueOf(textSize.replaceAll("\\D+",""));
+                if (!TextUtils.isEmpty(textSize)) {
+                    if (textSize.contains("px")) {
+                        int textSizeDigits = Integer.valueOf(textSize.replaceAll("\\D+", ""));
                         textSizeDigits *= mContext.getResources().getDisplayMetrics().density;
                         start(text, new AbsoluteSizeSpan(textSizeDigits));
                     }
-                    if(textSize.contains("em")) {
-                        float textSizeDigits = Float.valueOf(textSize.replaceAll("\\D+",""));
+                    if (textSize.contains("em")) {
+                        float textSizeDigits = Float.valueOf(textSize.replaceAll("\\D+", ""));
                         start(text, new RelativeSizeSpan(textSizeDigits));
                     }
                 }
@@ -685,11 +686,11 @@ class HtmlToSpannedConverter implements ContentHandler {
             setSpanFromMark(tag, text, f, new ForegroundColorSpan(f.mForegroundColor));
         }
         AbsoluteSizeSpan a = getLast(text, AbsoluteSizeSpan.class);
-        if(a != null) {
+        if (a != null) {
             setSpanFromMark(tag, text, a, new AbsoluteSizeSpan(a.getSize()));
         }
         RelativeSizeSpan r = getLast(text, RelativeSizeSpan.class);
-        if(r != null) {
+        if (r != null) {
             setSpanFromMark(tag, text, r, new RelativeSizeSpan(r.getSizeChange()));
         }
     }
@@ -705,14 +706,12 @@ class HtmlToSpannedConverter implements ContentHandler {
                 String width = m.group(1);
                 String height = m.group(2);
                 if (!TextUtils.isEmpty(width)) {
-                    if (width.contains("px")) {
-                        imgWidthDigits = Integer.valueOf(width.replaceAll("\\D+",""));
-                    }
+                    imgWidthDigits = Integer.valueOf(width.replaceAll("\\D+", ""));
+
                 }
                 if (!TextUtils.isEmpty(height)) {
-                    if (height.contains("px")) {
-                        imgHeightDigits = Integer.valueOf(height.replaceAll("\\D+", ""));
-                    }
+                    imgHeightDigits = Integer.valueOf(height.replaceAll("\\D+", ""));
+
                 }
             }
         }
@@ -743,7 +742,7 @@ class HtmlToSpannedConverter implements ContentHandler {
                 String height = m.group(2);
                 if (!TextUtils.isEmpty(width)) {
                     if (width.contains("px")) {
-                        imgWidthDigits = Integer.valueOf(width.replaceAll("\\D+",""));
+                        imgWidthDigits = Integer.valueOf(width.replaceAll("\\D+", ""));
                     }
                 }
                 if (!TextUtils.isEmpty(height)) {
@@ -902,27 +901,38 @@ class HtmlToSpannedConverter implements ContentHandler {
     public void skippedEntity(String name) throws SAXException {
     }
 
-    private static class Bold {}
+    private static class Bold {
+    }
 
-    private static class Italic {}
+    private static class Italic {
+    }
 
-    private static class Underline {}
+    private static class Underline {
+    }
 
-    private static class Strikethrough {}
+    private static class Strikethrough {
+    }
 
-    private static class Big {}
+    private static class Big {
+    }
 
-    private static class Small {}
+    private static class Small {
+    }
 
-    private static class Monospace {}
+    private static class Monospace {
+    }
 
-    private static class Blockquote {}
+    private static class Blockquote {
+    }
 
-    private static class Super {}
+    private static class Super {
+    }
 
-    private static class Sub {}
+    private static class Sub {
+    }
 
-    private static class Bullet {}
+    private static class Bullet {
+    }
 
     private static class Font {
         String mFace;
