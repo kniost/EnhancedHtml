@@ -219,8 +219,8 @@ public class EnhancedHtml {
      * <p>This uses TagSoup to handle real HTML, including all of the brokenness found in the wild.
      */
     public static Spanned fromHtml(@NonNull Context context, @NonNull String source, int flags,
-                                   @Nullable ImageGetter imageGetter,  @Nullable TeXFormula.TeXIconBuilder teXIconBuilder) {
-        return fromHtml(context, source, flags, imageGetter, null, teXIconBuilder);
+                                   @Nullable ImageGetter imageGetter,  @Nullable HtmlConfig htmlConfig) {
+        return fromHtml(context, source, flags, imageGetter, null, htmlConfig);
     }
 
     /**
@@ -244,8 +244,8 @@ public class EnhancedHtml {
      * <p>This uses TagSoup to handle real HTML, including all of the brokenness found in the wild.
      */
     public static Spanned fromHtml(@NonNull Context context, @NonNull String source, int flags,
-                                   @Nullable ImageGetter imageGetter, @Nullable TagHandler tagHandler, @Nullable TeXFormula.TeXIconBuilder teXIconBuilder) {
-        return fromHtml(context, source, flags, imageGetter, tagHandler, teXIconBuilder, null);
+                                   @Nullable ImageGetter imageGetter, @Nullable TagHandler tagHandler, @Nullable HtmlConfig htmlConfig) {
+        return fromHtml(context, source, flags, imageGetter, tagHandler, htmlConfig, null);
     }
 
     /**
@@ -257,7 +257,7 @@ public class EnhancedHtml {
      * <p>This uses TagSoup to handle real HTML, including all of the brokenness found in the wild.
      */
     public static Spanned fromHtml(@NonNull Context context, @NonNull String source, int flags, @Nullable ImageGetter imageGetter, @Nullable TagHandler tagHandler,
-                                   @Nullable TeXFormula.TeXIconBuilder teXIconBuilder, @Nullable SpanCallback spanCallback) {
+                                   @Nullable HtmlConfig htmlConfig, @Nullable SpanCallback spanCallback) {
         if (source == null) {
             return null;
         }
@@ -269,7 +269,7 @@ public class EnhancedHtml {
             throw new RuntimeException(e);
         }
         HtmlToSpannedConverter converter =
-                new HtmlToSpannedConverter(context, source, imageGetter, tagHandler, teXIconBuilder, spanCallback, parser, flags);
+                new HtmlToSpannedConverter(context, source, imageGetter, tagHandler, htmlConfig, spanCallback, parser, flags);
         return converter.convert();
     }
 
@@ -656,4 +656,6 @@ public class EnhancedHtml {
             }
         }
     }
+
+
 }

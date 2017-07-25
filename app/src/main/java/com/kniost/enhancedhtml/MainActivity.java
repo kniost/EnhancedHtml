@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
             "    可以<input value=\"你好\"><span style=\"color:#ff0000\"><span style=\"text-decoration:underline;\">下划线，然后居中</span></span>\n" +
             "</p>\n" +
             "<p style=\"text-align: center;\">\n" +
-            "    <img src=\"http://img.voidcn.com/vcimg/000/004/971/622_3a7_c9a.jpg\" style=\"width: 182.123px; height: 326.33px;\"/>\n" +
+            "    <img src=\"http://img.voidcn.com/vcimg/000/004/971/622_3a7_c9a.jpg\" style=\"width: 45.123px; height: 46.33px;\"/>\n" +
             "<br/> <input value=\"你好\">" +
             "</p>\n" +
             "<p style=\"text-align: right;\">\n" +
