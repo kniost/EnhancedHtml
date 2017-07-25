@@ -706,11 +706,19 @@ class HtmlToSpannedConverter implements ContentHandler {
                 String width = m.group(1);
                 String height = m.group(2);
                 if (!TextUtils.isEmpty(width)) {
-                    imgWidthDigits = Integer.valueOf(width.replaceAll("\\D+", ""));
+                    try {
+                        imgWidthDigits = Float.valueOf(width.replaceAll("[^0-9.]", "")).intValue();
+                    } catch (NumberFormatException e) {
+                        e.printStackTrace();
+                    }
 
                 }
                 if (!TextUtils.isEmpty(height)) {
-                    imgHeightDigits = Integer.valueOf(height.replaceAll("\\D+", ""));
+                    try {
+                        imgHeightDigits = Float.valueOf(height.replaceAll("[^0-9.]", "")).intValue();
+                    } catch (NumberFormatException e) {
+                        e.printStackTrace();
+                    }
 
                 }
             }
