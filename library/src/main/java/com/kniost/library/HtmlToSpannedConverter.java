@@ -822,7 +822,8 @@ class HtmlToSpannedConverter implements ContentHandler {
                 imgHeightDigits = (int) scale * imgHeightDigits;
             }
         } else if (mHtmlConfig.getFormulaScaleType().equals(HtmlConfig.ScaleType.CUSTOM)) {
-
+            imgWidthDigits = (int) (imgWidthDigits * mHtmlConfig.getFormulaScaling());
+            imgHeightDigits = (int) (imgHeightDigits * mHtmlConfig.getFormulaScaling());
         }
         d.setBounds(0, 0, imgWidthDigits, imgHeightDigits);
         int len = text.length();
