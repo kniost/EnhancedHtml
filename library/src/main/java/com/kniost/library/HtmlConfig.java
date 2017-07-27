@@ -8,7 +8,7 @@ import com.kniost.library.jlatexmath.core.TeXFormula;
  * ScaleType ORIGINAL shows the picture in defined size, DENSITY shows the pic in density-based scaled size
  */
 public class HtmlConfig {
-    enum ScaleType {
+    public enum ScaleType {
         ORIGNAL, DENSITY
     }
     private TeXFormula.TeXIconBuilder mTeXIconBuilder;

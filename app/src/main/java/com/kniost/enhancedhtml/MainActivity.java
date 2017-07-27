@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
 //            "        <span class=\"mathquill-embedded-latex\" style=\"background-color: rgb(255, 255, 255); width: 141px; height: 50px;\">\\frac{-b\\pm\\sqrt[2]{b^2-4ac}}{2a}</span>\n" +
 //            "    </div>\n" +
 //            "</p>";
-    "<p>比大小、并填空。</p><p><span class=\"mathquill-embedded-latex\" style=\"width: 26px; height: 41px;\">\\frac{1}{2}</span><input type=\"text\"/><span class=\"mathquill-embedded-latex\" style=\"width: 26px; height: 41px;\">\\frac{2}{5}</span></p>";
+    "<p>比大小、并填空。</p><p><span class=\"mathquill-embedded-latex\" style=\"width: 26px; height: 41px;\">\\frac{1}{2}\\alpha</span><input type=\"text\"/><span class=\"mathquill-embedded-latex\" style=\"width: 26px; height: 41px;\">\\frac{2}{5}</span></p>";
     private final String LATEX_STRING = "\\frac{-b\\pm\\sqrt[2]{b^2-4ac}}{2a}";
 
 
