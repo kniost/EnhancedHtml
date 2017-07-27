@@ -239,7 +239,7 @@ class HtmlToSpannedConverter implements ContentHandler {
     private static Pattern getForegroundColorPattern() {
         if (sForegroundColorPattern == null) {
             sForegroundColorPattern = Pattern.compile(
-                    "(?:\\s+|\\A)color\\s*:\\s*(\\S*)\\b");
+                    "(?:\\s*)color\\s*:\\s*(\\S*)\\b");
         }
         return sForegroundColorPattern;
     }
@@ -263,7 +263,7 @@ class HtmlToSpannedConverter implements ContentHandler {
     private static Pattern getFontSizePattern() {
         if (sTextFontSizePattern == null) {
             sTextFontSizePattern = Pattern.compile(
-                    "(?:\\s+|\\A)font-size\\s*:\\s*(\\S*)\\b");
+                    "(?:\\s*)font-size\\s*:\\s*(\\S*)\\b");
         }
         return sTextFontSizePattern;
     }
@@ -279,7 +279,7 @@ class HtmlToSpannedConverter implements ContentHandler {
 
     private static Pattern getLatexPattern() {
         if (sLatexPattern == null) {
-            sLatexPattern = Pattern.compile("(?:\\s*)<span\\s*class\\s*=\\s*\"mathquill-embedded-latex\"(.*)>(.*)</span>");
+            sLatexPattern = Pattern.compile("(?:\\s*)<span\\s*class\\s*=\\s*\"mathquill-embedded-latex\"(.*?)>(.*?)</span>");
         }
         return sLatexPattern;
     }
@@ -788,7 +788,7 @@ class HtmlToSpannedConverter implements ContentHandler {
         } else {
             icon = formula.new TeXIconBuilder()
                     .setStyle(TeXConstants.STYLE_DISPLAY)
-                    .setSize(14)
+                    .setSize(16)
                     .setWidth(TeXConstants.UNIT_PIXEL, imgWidthDigits, TeXConstants.ALIGN_LEFT)
                     .setIsMaxWidth(true)
                     .setInterLineSpacing(TeXConstants.UNIT_PIXEL, 5).build();
@@ -806,6 +806,21 @@ class HtmlToSpannedConverter implements ContentHandler {
         if (d == null) {
             Resources res = mContext.getResources();
             d = res.getDrawable(R.drawable.ic_no_img);
+        }
+        if (imgHeightDigits == 0 || imgWidthDigits == 0) {
+            imgWidthDigits = d.getIntrinsicWidth();
+            imgHeightDigits = d.getIntrinsicHeight();
+        }
+        if (mHtmlConfig.getFormulaScaleType().equals(HtmlConfig.ScaleType.DENSITY)) {
+            float density = mContext.getResources().getDisplayMetrics().density;
+            imgWidthDigits = (int) (imgWidthDigits * density);
+            imgHeightDigits = (int) (imgHeightDigits * density);
+            if (imgWidthDigits > mContext.getResources().getDisplayMetrics().widthPixels) {
+                int width = mContext.getResources().getDisplayMetrics().widthPixels / 2;
+                double scale = (double) width / imgWidthDigits;
+                imgWidthDigits = width;
+                imgHeightDigits = (int) scale * imgHeightDigits;
+            }
         }
         d.setBounds(0, 0, imgWidthDigits, imgHeightDigits);
         int len = text.length();

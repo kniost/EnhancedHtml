@@ -2,6 +2,7 @@ package com.kniost.enhancedhtml;
 
 import android.text.Editable;
 import android.text.Spanned;
+import android.text.TextUtils;
 
 import com.kniost.library.EnhancedHtml;
 
@@ -21,6 +22,9 @@ class CustomTagHandler implements EnhancedHtml.TagHandler {
         if (opening) {
             if (tag.equalsIgnoreCase("input")) {
                 mInputValue = attributes.getValue("", "value");
+                if (TextUtils.isEmpty(mInputValue)) {
+                    mInputValue = "示例";
+                }
                 mStart = output.length();
                 output.append(mInputValue);
             }
