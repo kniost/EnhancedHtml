@@ -19,6 +19,7 @@ public class DemoInputSpan extends ReplacementSpan {
     private float mLeft, mRight;
     private final Paint mPaint;
     private RectF mRectF = new RectF(mLeft, mTop, mRight, mBottom);
+
     public DemoInputSpan() {
         mPaint = new Paint();
         mPaint.setStyle(Paint.Style.FILL);

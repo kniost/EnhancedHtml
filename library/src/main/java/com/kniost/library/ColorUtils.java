@@ -1,9 +1,13 @@
 package com.kniost.library;
 
+import android.content.Context;
+import android.graphics.Color;
 import android.support.annotation.ColorInt;
 
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static android.graphics.Color.BLACK;
 import static android.graphics.Color.BLUE;
@@ -35,11 +39,23 @@ class ColorUtils {
             try {
                 return XmlUtils.convertValueToInt(color, -1);
             } catch (NumberFormatException nfe) {
+                Matcher m = sRGBColorPattern.matcher(color);
+                if (m.find()) {
+                    try {
+                        int red = Integer.parseInt(m.group(1));
+                        int green = Integer.parseInt(m.group(2));
+                        int blue = Integer.parseInt(m.group(3));
+                        return Color.rgb(red, green, blue);
+                    } catch (NumberFormatException e) {
+                        return -1;
+                    }
+                }
                 return -1;
             }
         }
     }
     private static final HashMap<String, Integer> sColorNameMap;
+    private static final Pattern sRGBColorPattern;
     static {
         sColorNameMap = new HashMap<String, Integer>();
         sColorNameMap.put("black", BLACK);
@@ -65,6 +81,7 @@ class ColorUtils {
         sColorNameMap.put("purple", 0xFF800080);
         sColorNameMap.put("silver", 0xFFC0C0C0);
         sColorNameMap.put("teal", 0xFF008080);
+        sRGBColorPattern = Pattern.compile("rgb\\s*\\(\\s*(\\d+)\\s*,\\s*(\\d+)\\s*,\\s*(\\d+)\\s*\\)");
     }
 
 }

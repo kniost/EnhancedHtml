@@ -629,6 +629,7 @@ class HtmlToSpannedConverter implements ContentHandler {
     private void startCssStyle(Editable text, Attributes attributes) {
         String style = attributes.getValue("", "style");
         if (style != null) {
+            style = style.replaceAll("\\s*", "");
             Matcher m = getForegroundColorPattern().matcher(style);
             if (m.find()) {
                 int c = getHtmlColor(m.group(1));

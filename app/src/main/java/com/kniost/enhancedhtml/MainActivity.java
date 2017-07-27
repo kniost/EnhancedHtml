@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.kniost.library.EnhancedHtml;
+import com.kniost.library.HtmlConfig;
 import com.kniost.library.jlatexmath.core.AjLatexMath;
 
 public class MainActivity extends AppCompatActivity {
@@ -49,7 +50,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setTestTv() {
-        Spanned spannableString = EnhancedHtml.fromHtml(MainActivity.this, TEST_STRING, 0, null, new CustomTagHandler());
+        HtmlConfig config = new HtmlConfig.Builder()
+                .setFormulaScaleType(HtmlConfig.ScaleType.DENSITY)
+                .build();
+        Spanned spannableString = EnhancedHtml.fromHtml(MainActivity.this,
+                TEST_STRING,
+                0, null,
+                new CustomTagHandler(), config);
         mTestTv.setText(spannableString);
 
     }
@@ -58,26 +65,25 @@ public class MainActivity extends AppCompatActivity {
      * 文字由UMEditor生成
      */
     private final String TEST_STRING =
-//            "<p>\n" +
-//            "    部分<input value=\"你好\"><strong>文字加粗</strong>居左\n" +
-//            "</p>\n" +
-//            "<p style=\"text-align: center;\">\n" +
-//            "    可以<input value=\"你好\"><span style=\"color:#ff0000\"><span style=\"text-decoration:underline;\">下划线，然后居中</span></span>\n" +
-//            "</p>\n" +
-//            "<p style=\"text-align: center;\">\n" +
-//            "    <img src=\"http://img.voidcn.com/vcimg/000/004/971/622_3a7_c9a.jpg\" style=\"width: 45.123px; height: 46.33px;\"/>\n" +
-//            "<br/> <input value=\"你好\">" +
-//            "</p>\n" +
-//            "<p style=\"text-align: right;\">\n" +
-//            "    或者有<font color=\"green\">个公式</font><span class=\"mathquill-embedded-latex\" style=\"width: 25px; height: 32px;\">x^3</span>，右对齐\n" +
-//            "</p>" +
-//            "<p>\n" +
-//            "    <br/>\n" +
-//            "    <div style=\"text-align: center;\">\n" +
-//            "        <span class=\"mathquill-embedded-latex\" style=\"background-color: rgb(255, 255, 255); width: 141px; height: 50px;\">\\frac{-b\\pm\\sqrt[2]{b^2-4ac}}{2a}</span>\n" +
-//            "    </div>\n" +
-//            "</p>";
-    "<p>比大小、并填空。</p><p><span class=\"mathquill-embedded-latex\" style=\"width: 26px; height: 41px;\">\\frac{1}{2}\\alpha</span><input type=\"text\"/><span class=\"mathquill-embedded-latex\" style=\"width: 26px; height: 41px;\">\\frac{2}{5}</span></p>";
+            "<p>\n" +
+            "    部分<input value=\"你好\"><strong>文字加粗</strong>居左\n" +
+            "</p>\n" +
+            "<p style=\"text-align: center;\">\n" +
+            "    可以<input value=\"你好\"><span style=\"color:rgb(255, 0, 0); text-decoration:line-through;\"><span style=\"text-decoration:underline;\">下划线，然后居中</span></span>\n" +
+            "</p>\n" +
+            "<p style=\"text-align: center;\">\n" +
+            "    <img src=\"http://img.voidcn.com/vcimg/000/004/971/622_3a7_c9a.jpg\" style=\"width: 45.123px; height: 46.33px;\"/>\n" +
+            "<br/> <input value=\"你好\">" +
+            "</p>\n" +
+            "<p style=\"text-align: right;\">\n" +
+            "    或者有<font color=\"green\">个公式</font><span class=\"mathquill-embedded-latex\" style=\"width: 25px; height: 32px;\">x^3</span>，右对齐\n" +
+            "</p>" +
+            "<p>\n" +
+            "    <br/>\n" +
+            "    <div style=\"text-align: center;\">\n" +
+            "        <span class=\"mathquill-embedded-latex\" style=\"background-color: rgb(255, 255, 255); width: 141px; height: 50px;\">\\frac{-b\\pm\\sqrt[2]{b^2-4ac}}{2a}</span>\n" +
+            "    </div>\n" +
+            "</p>";
     private final String LATEX_STRING = "\\frac{-b\\pm\\sqrt[2]{b^2-4ac}}{2a}";
 
 
