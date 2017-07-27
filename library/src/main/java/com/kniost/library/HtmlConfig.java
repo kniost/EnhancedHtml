@@ -9,11 +9,12 @@ import com.kniost.library.jlatexmath.core.TeXFormula;
  */
 public class HtmlConfig {
     public enum ScaleType {
-        ORIGNAL, DENSITY
+        ORIGNAL, DENSITY, CUSTOM
     }
     private TeXFormula.TeXIconBuilder mTeXIconBuilder;
     private ScaleType mImgScaleType;
     private ScaleType mFormulaScaleType;
+    private float mFormulaScaling;
     private boolean mIsOverrideFontSize;
 
     HtmlConfig() {}
@@ -50,12 +51,21 @@ public class HtmlConfig {
         mIsOverrideFontSize = overrideFontSize;
     }
 
+    public float getFormulaScaling() {
+        return mFormulaScaling;
+    }
+
+    public void setFormulaScaling(float formulaScaling) {
+        mFormulaScaling = formulaScaling;
+    }
+
     public static class Builder {
         HtmlConfig mHtmlConfig;
 
         public Builder() {
             mHtmlConfig = new HtmlConfig();
             mHtmlConfig.setOverrideFontSize(true);
+            mHtmlConfig.setFormulaScaling(1);
         }
 
         public Builder setTeXIconBuilder(TeXFormula.TeXIconBuilder builder) {
@@ -70,6 +80,11 @@ public class HtmlConfig {
 
         public Builder setFormulaScaleType(ScaleType scaleType) {
             mHtmlConfig.setFormulaScaleType(scaleType);
+            return this;
+        }
+
+        public Builder setFormulaScaling(float scaling) {
+            mHtmlConfig.setFormulaScaling(scaling);
             return this;
         }
 

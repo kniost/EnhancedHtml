@@ -64,6 +64,7 @@ class HtmlToSpannedConverter implements ContentHandler {
     private EnhancedHtml.TagHandler mTagHandler;
     private int mFlags;
     private HtmlConfig mHtmlConfig;
+    private static float sDensity;
     private static Pattern sTextAlignPattern;
     private static Pattern sForegroundColorPattern;
     private static Pattern sBackgroundColorPattern;
@@ -295,6 +296,7 @@ class HtmlToSpannedConverter implements ContentHandler {
         mSpanCallback = spanCallback;
         mReader = parser;
         mFlags = flags;
+        sDensity = mContext.getResources().getDisplayMetrics().density;
         mHtmlConfig = (htmlConfig != null ? htmlConfig : new HtmlConfig.Builder().build());
     }
 
@@ -657,7 +659,7 @@ class HtmlToSpannedConverter implements ContentHandler {
                     if (!TextUtils.isEmpty(textSize)) {
                         if (textSize.contains("px")) {
                             int textSizeDigits = Integer.valueOf(textSize.replaceAll("\\D+", ""));
-                            textSizeDigits *= mContext.getResources().getDisplayMetrics().density;
+                            textSizeDigits *= sDensity;
                             start(text, new AbsoluteSizeSpan(textSizeDigits));
                         }
                         if (textSize.contains("em")) {
@@ -736,9 +738,8 @@ class HtmlToSpannedConverter implements ContentHandler {
             imgHeightDigits = d.getIntrinsicHeight();
         }
         if (mHtmlConfig.getImgScaleType().equals(HtmlConfig.ScaleType.DENSITY)) {
-            float density = mContext.getResources().getDisplayMetrics().density;
-            imgWidthDigits = (int) (imgWidthDigits * density);
-            imgHeightDigits = (int) (imgHeightDigits * density);
+            imgWidthDigits = (int) (imgWidthDigits * sDensity);
+            imgHeightDigits = (int) (imgHeightDigits * sDensity);
             if (imgWidthDigits > mContext.getResources().getDisplayMetrics().widthPixels) {
                 int width = mContext.getResources().getDisplayMetrics().widthPixels / 2;
                 double scale = (double) width / imgWidthDigits;
@@ -812,15 +813,16 @@ class HtmlToSpannedConverter implements ContentHandler {
             imgHeightDigits = d.getIntrinsicHeight();
         }
         if (mHtmlConfig.getFormulaScaleType().equals(HtmlConfig.ScaleType.DENSITY)) {
-            float density = mContext.getResources().getDisplayMetrics().density;
-            imgWidthDigits = (int) (imgWidthDigits * density);
-            imgHeightDigits = (int) (imgHeightDigits * density);
+            imgWidthDigits = (int) (imgWidthDigits * sDensity);
+            imgHeightDigits = (int) (imgHeightDigits * sDensity);
             if (imgWidthDigits > mContext.getResources().getDisplayMetrics().widthPixels) {
                 int width = mContext.getResources().getDisplayMetrics().widthPixels / 2;
                 double scale = (double) width / imgWidthDigits;
                 imgWidthDigits = width;
                 imgHeightDigits = (int) scale * imgHeightDigits;
             }
+        } else if (mHtmlConfig.getFormulaScaleType().equals(HtmlConfig.ScaleType.CUSTOM)) {
+
         }
         d.setBounds(0, 0, imgWidthDigits, imgHeightDigits);
         int len = text.length();
