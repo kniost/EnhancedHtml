@@ -248,7 +248,7 @@ class HtmlToSpannedConverter implements ContentHandler {
     private static Pattern getBackgroundColorPattern() {
         if (sBackgroundColorPattern == null) {
             sBackgroundColorPattern = Pattern.compile(
-                    "(?:\\s+|\\A)background(?:-color)?\\s*:\\s*(\\S*)\\b");
+                    "(?:\\s*)background(?:-color)?\\s*:\\s*(\\S*)\\b");
         }
         return sBackgroundColorPattern;
     }
@@ -256,7 +256,7 @@ class HtmlToSpannedConverter implements ContentHandler {
     private static Pattern getTextDecorationPattern() {
         if (sTextDecorationPattern == null) {
             sTextDecorationPattern = Pattern.compile(
-                    "(?:\\s+|\\A)text-decoration\\s*:\\s*(\\S*)\\b");
+                    "(?:\\s*)text-decoration\\s*:\\s*(\\S*)\\b");
         }
         return sTextDecorationPattern;
     }
