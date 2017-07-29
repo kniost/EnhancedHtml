@@ -76,13 +76,14 @@ public class MainActivity extends AppCompatActivity {
             "<br/> <input value=\"你好\">" +
             "</p>\n" +
             "<p style=\"text-align: right;\">\n" +
-            "    或者有<font color=\"green\">个公式</font><span class=\"mathquill-embedded-latex\" style=\"width: 25px; height: 32px;\">x^3</span>，右对齐\n" +
+            "    或者有<font color=\"green\">个公式</font><span class=\"mathquill-embedded-latex\" style=\"width: 79px; height: 26px;\">x=x^2&lt;2&gt;1</span>，右对齐\n" +
             "</p>" +
             "<p>\n" +
             "    <br/>\n" +
             "    <div style=\"text-align: center;\">\n" +
             "        <span class=\"mathquill-embedded-latex\" style=\"background-color: rgb(255, 255, 255); width: 141px; height: 50px;\">\\frac{-b\\pm\\sqrt[2]{b^2-4ac}}{2a}</span>\n" +
             "    </div>\n" +
+                    "<span class=\"mathquill-embedded-latex\" style=\"width: 116px; height: 32px;\">x=x^2\\&lt;1&gt;3</span>" +
             "</p>";
     private final String LATEX_STRING = "\\frac{-b\\pm\\sqrt[2]{b^2-4ac}}{2a}";
 

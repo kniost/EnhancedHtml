@@ -31,6 +31,7 @@ import android.text.style.TypefaceSpan;
 import android.text.style.UnderlineSpan;
 
 import com.kniost.library.jlatexmath.core.Insets;
+import com.kniost.library.jlatexmath.core.ParseException;
 import com.kniost.library.jlatexmath.core.TeXConstants;
 import com.kniost.library.jlatexmath.core.TeXFormula;
 import com.kniost.library.jlatexmath.core.TeXIcon;
@@ -280,7 +281,7 @@ class HtmlToSpannedConverter implements ContentHandler {
 
     private static Pattern getLatexPattern() {
         if (sLatexPattern == null) {
-            sLatexPattern = Pattern.compile("(?:\\s*)<span\\s*class\\s*=\\s*\"mathquill-embedded-latex\"(.*?)>(.*?)</span>");
+            sLatexPattern = Pattern.compile("(?:\\s*)<span\\s*class\\s*=\\s*\"mathquill-embedded-latex(.*?)>(.*?)</span>");
         }
         return sLatexPattern;
     }
@@ -390,7 +391,7 @@ class HtmlToSpannedConverter implements ContentHandler {
         } else if (tag.equalsIgnoreCase("img")) {
             startImg(mSpannableStringBuilder, attributes, mImageGetter);
         } else if (tag.equalsIgnoreCase("latex")) {
-            startLaTeX(mSpannableStringBuilder, attributes);
+            startTeX(mSpannableStringBuilder, attributes);
         } else if (mTagHandler != null) {
             mTagHandler.handleTag(true, tag, attributes, mSpannableStringBuilder, mReader);
         }
@@ -756,7 +757,7 @@ class HtmlToSpannedConverter implements ContentHandler {
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
     }
 
-    private void startLaTeX(Editable text, Attributes attributes) {
+    private void startTeX(Editable text, Attributes attributes) {
         String formulaString = attributes.getValue("", "formula");
         String style = attributes.getValue("", "style");
         int imgWidthDigits = 0;
@@ -782,7 +783,29 @@ class HtmlToSpannedConverter implements ContentHandler {
                 }
             }
         }
-        TeXFormula formula = new TeXFormula(formulaString);
+
+        if (mHtmlConfig.getFormulaScaleType().equals(HtmlConfig.ScaleType.DENSITY)) {
+            imgWidthDigits = (int) (imgWidthDigits * sDensity);
+            imgHeightDigits = (int) (imgHeightDigits * sDensity);
+            if (imgWidthDigits > mContext.getResources().getDisplayMetrics().widthPixels) {
+                int width = mContext.getResources().getDisplayMetrics().widthPixels / 2;
+                double scale = (double) width / imgWidthDigits;
+                imgWidthDigits = width;
+                imgHeightDigits = (int) scale * imgHeightDigits;
+            }
+        } else if (mHtmlConfig.getFormulaScaleType().equals(HtmlConfig.ScaleType.CUSTOM)) {
+            imgWidthDigits = (int) (imgWidthDigits * mHtmlConfig.getFormulaScaling());
+            imgHeightDigits = (int) (imgHeightDigits * mHtmlConfig.getFormulaScaling());
+        }
+
+        TeXFormula formula = null;
+        try {
+            formulaString = replaceIllegalTex(formulaString);
+            formula = new TeXFormula(formulaString);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            formula = new TeXFormula("illegal formula");
+        }
         TeXIcon icon;
         if (mHtmlConfig != null && mHtmlConfig.getTeXIconBuilder() != null) {
             icon = formula.new TeXIconBuilder(mHtmlConfig.getTeXIconBuilder())
@@ -813,24 +836,16 @@ class HtmlToSpannedConverter implements ContentHandler {
             imgWidthDigits = d.getIntrinsicWidth();
             imgHeightDigits = d.getIntrinsicHeight();
         }
-        if (mHtmlConfig.getFormulaScaleType().equals(HtmlConfig.ScaleType.DENSITY)) {
-            imgWidthDigits = (int) (imgWidthDigits * sDensity);
-            imgHeightDigits = (int) (imgHeightDigits * sDensity);
-            if (imgWidthDigits > mContext.getResources().getDisplayMetrics().widthPixels) {
-                int width = mContext.getResources().getDisplayMetrics().widthPixels / 2;
-                double scale = (double) width / imgWidthDigits;
-                imgWidthDigits = width;
-                imgHeightDigits = (int) scale * imgHeightDigits;
-            }
-        } else if (mHtmlConfig.getFormulaScaleType().equals(HtmlConfig.ScaleType.CUSTOM)) {
-            imgWidthDigits = (int) (imgWidthDigits * mHtmlConfig.getFormulaScaling());
-            imgHeightDigits = (int) (imgHeightDigits * mHtmlConfig.getFormulaScaling());
-        }
         d.setBounds(0, 0, imgWidthDigits, imgHeightDigits);
         int len = text.length();
         text.append("\uFFFC");
         text.setSpan(new ImageSpan(d, ""), len, text.length(),
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+    }
+
+    private String replaceIllegalTex(String formulaString) {
+        formulaString = formulaString.replaceAll("\\\\<", "<");
+        return formulaString;
     }
 
     private void startFont(Editable text, Attributes attributes) {
