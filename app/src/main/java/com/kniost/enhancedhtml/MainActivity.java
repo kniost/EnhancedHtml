@@ -52,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
     private void setTestTv() {
         HtmlConfig config = new HtmlConfig.Builder()
                 .setFormulaScaleType(HtmlConfig.ScaleType.DENSITY)
+                .setFormulaAlignment(HtmlConfig.ImgAlignment.VERTICAL_CENTER)
                 .build();
         Spanned spannableString = EnhancedHtml.fromHtml(MainActivity.this,
                 TEST_STRING,
@@ -66,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
      */
     private final String TEST_STRING =
             "<p>\n" +
-            "    部分<input value=\"你好\"><strong>文字加粗</strong>居左\n" +
+            "    部分<input value=\"你好\"><span class=\"mathquill-embedded-latex\" style=\"background-color: rgb(255, 255, 255); width: 141px; height: 50px;\">\\frac{-b\\pm\\sqrt[2]{b^2-4ac}}{2a}</span><strong>文字加粗</strong>居左\n" +
             "</p>\n" +
             "<p style=\"text-align: center;\">\n" +
             "    可以<input value=\"你好\"><span style=\"color:rgb(255, 0, 0); text-decoration:line-through;\"><span style=\"text-decoration:underline;\">下划线，然后居中</span></span>\n" +

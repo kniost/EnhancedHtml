@@ -11,11 +11,15 @@ public class HtmlConfig {
     public enum ScaleType {
         ORIGNAL, DENSITY, CUSTOM
     }
+    public enum ImgAlignment {
+        NORMAL, VERTICAL_CENTER
+    }
     private TeXFormula.TeXIconBuilder mTeXIconBuilder;
     private ScaleType mImgScaleType;
     private ScaleType mFormulaScaleType;
     private float mFormulaScaling;
     private boolean mIsOverrideFontSize;
+    private ImgAlignment mImgAlignment, mFormulaAlignment;
 
     HtmlConfig() {}
 
@@ -59,6 +63,22 @@ public class HtmlConfig {
         mFormulaScaling = formulaScaling;
     }
 
+    public ImgAlignment getImgAlignment() {
+        return mImgAlignment;
+    }
+
+    public void setImgAlignment(ImgAlignment imgAlignment) {
+        mImgAlignment = imgAlignment;
+    }
+
+    public ImgAlignment getFormulaAlignment() {
+        return mFormulaAlignment;
+    }
+
+    public void setFormulaAlignment(ImgAlignment formulaAlignment) {
+        mFormulaAlignment = formulaAlignment;
+    }
+
     public static class Builder {
         HtmlConfig mHtmlConfig;
 
@@ -66,6 +86,8 @@ public class HtmlConfig {
             mHtmlConfig = new HtmlConfig();
             mHtmlConfig.setOverrideFontSize(true);
             mHtmlConfig.setFormulaScaling(1);
+            mHtmlConfig.setImgAlignment(ImgAlignment.NORMAL);
+            mHtmlConfig.setImgAlignment(ImgAlignment.NORMAL);
         }
 
         public Builder setTeXIconBuilder(TeXFormula.TeXIconBuilder builder) {
@@ -90,6 +112,16 @@ public class HtmlConfig {
 
         public Builder setOverrideFontSize(boolean overrideFontSize) {
             mHtmlConfig.setOverrideFontSize(overrideFontSize);
+            return this;
+        }
+
+        public Builder setImgAlignment(ImgAlignment alignment) {
+            mHtmlConfig.setImgAlignment(alignment);
+            return this;
+        }
+
+        public Builder setFormulaAlignment(ImgAlignment alignment) {
+            mHtmlConfig.setFormulaAlignment(alignment);
             return this;
         }
 

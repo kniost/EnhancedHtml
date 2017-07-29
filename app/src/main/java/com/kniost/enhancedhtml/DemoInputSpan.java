@@ -33,6 +33,9 @@ public class DemoInputSpan extends ReplacementSpan {
         if (fm != null) {
             fm.ascent -= 10;
             fm.descent += 10;
+
+            fm.top = fm.ascent;
+            fm.bottom = 0;
         }
         mWidth = (int) paint.measureText(text, start, end) + 30;
         return mWidth;

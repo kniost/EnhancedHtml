@@ -753,8 +753,13 @@ class HtmlToSpannedConverter implements ContentHandler {
         int len = text.length();
         
         text.append("\uFFFC");
-        text.setSpan(new ImageSpan(d, src), len, text.length(),
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        if (mHtmlConfig.getImgAlignment() == HtmlConfig.ImgAlignment.VERTICAL_CENTER) {
+            text.setSpan(new VerticalImageSpan(d), len, text.length(),
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        } else {
+            text.setSpan(new ImageSpan(d, src), len, text.length(),
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
     }
 
     private void startTeX(Editable text, Attributes attributes) {
@@ -821,7 +826,7 @@ class HtmlToSpannedConverter implements ContentHandler {
         icon.setInsets(new Insets(5, 5, 5, 5));
         Bitmap image = Bitmap.createBitmap(icon.getIconWidth(), icon.getIconHeight(), Bitmap.Config.ARGB_8888);
         Canvas c = new Canvas(image);
-        c.drawColor(Color.WHITE);
+        c.drawColor(Color.TRANSPARENT);
         icon.paintIcon(c, 0, 0);
 
         Drawable d = null;
@@ -839,8 +844,13 @@ class HtmlToSpannedConverter implements ContentHandler {
         d.setBounds(0, 0, imgWidthDigits, imgHeightDigits);
         int len = text.length();
         text.append("\uFFFC");
-        text.setSpan(new ImageSpan(d, ""), len, text.length(),
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        if (mHtmlConfig.getFormulaAlignment() == HtmlConfig.ImgAlignment.VERTICAL_CENTER) {
+            text.setSpan(new VerticalImageSpan(d), len, text.length(),
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        } else {
+            text.setSpan(new ImageSpan(d, ""), len, text.length(),
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
     }
 
     private String replaceIllegalTex(String formulaString) {
